@@ -170,6 +170,54 @@ function selectSpell(spell) {
     updateSpellDetails();
 }
 
+function parseSpellIncrement(incrementText) {
+    // Extrai os valores numéricos do texto do aprimoramento
+    const diceMatch = incrementText.match(/\+(\d+)d(\d+)\+(\d+)/);
+    if (diceMatch) {
+        return {
+            numDice: parseInt(diceMatch[1]),
+            diceSides: parseInt(diceMatch[2]),
+            bonus: parseInt(diceMatch[3])
+        };
+    }
+    return null;
+}
+
+function parseSpellBase(spellText) {
+    // Extrai os valores base da descrição da magia
+    const diceMatch = spellText.match(/(\d+)d(\d+)\+(\d+)/);
+    if (diceMatch) {
+        return {
+            numDice: parseInt(diceMatch[1]),
+            diceSides: parseInt(diceMatch[2]),
+            bonus: parseInt(diceMatch[3]),
+            fullMatch: diceMatch[0]
+        };
+    }
+    return null;
+}
+
+function updateSpellDescription(baseText, aprimoramentos) {
+    let updatedText = baseText;
+    const baseValues = parseSpellBase(baseText);
+    
+    if (baseValues) {
+        aprimoramentos.forEach(apr => {
+            if (apr.count && apr.count > 0 && apr.descricao.toLowerCase().startsWith('aumenta')) {
+                const increment = parseSpellIncrement(apr.descricao);
+                if (increment) {
+                    const totalNumDice = baseValues.numDice + (increment.numDice * apr.count);
+                    const totalBonus = baseValues.bonus + (increment.bonus * apr.count);
+                    const newValue = `${totalNumDice}d${baseValues.diceSides}+${totalBonus}`;
+                    updatedText = updatedText.replace(baseValues.fullMatch, newValue);
+                }
+            }
+        });
+    }
+    
+    return updatedText;
+}
+
 function updateSpellDetails() {
     const detailsDiv = document.getElementById('spellDetails');
     const custoTotalSpan = document.getElementById('custoTotalValue');
@@ -187,10 +235,10 @@ function updateSpellDetails() {
         const inputHtml = isAumenta ? 
             `<div class="aumenta-controls">
                 <button class="btn-minus">-</button>
-                <span class="count-value">0</span>
+                <span class="count-value">${apr.count || 0}</span>
                 <button class="btn-plus">+</button>
              </div>` :
-            `<input type="checkbox" class="apr-check">`;
+            `<input type="checkbox" class="apr-check" ${apr.count ? 'checked' : ''}>`;
             
         return `
             <div class="aprimoramento-item">
@@ -199,11 +247,14 @@ function updateSpellDetails() {
                 </div>
                 <div class="apr-controls">
                     ${inputHtml}
-                    <span class="apr-custo-atual">(+0 PM)</span>
+                    <span class="apr-custo-atual">(+${(apr.count || 0) * apr.pm} PM)</span>
                 </div>
             </div>
         `;
     }).join('');
+
+    // Atualiza a descrição com os aprimoramentos ativos
+    const updatedDescription = updateSpellDescription(selectedSpell.descricao, selectedSpell.aprimoramentos);
 
     detailsDiv.innerHTML = `
         <h3>${selectedSpell.nome}</h3>
@@ -215,7 +266,7 @@ function updateSpellDetails() {
             <p><strong>Duração:</strong> ${selectedSpell.duracao}</p>
             <p><strong>Resistência:</strong> ${selectedSpell.resistencia}</p>
             <p><strong>Descrição:</strong></p>
-            <p class="spell-description">${selectedSpell.descricao}</p>
+            <p class="spell-description">${updatedDescription}</p>
         </div>
         <div class="aprimoramentos-section">
             <h4>Aprimoramentos Disponíveis:</h4>
@@ -236,9 +287,11 @@ function updateSpellDetails() {
 
             if (apr.descricao.toLowerCase().startsWith('aumenta')) {
                 const count = parseInt(item.querySelector('.count-value').textContent) || 0;
+                apr.count = count; // Atualiza o contador no objeto
                 custoApr = apr.pm * count;
             } else {
                 const isChecked = item.querySelector('.apr-check').checked;
+                apr.count = isChecked ? 1 : 0; // Atualiza o estado no objeto
                 custoApr = isChecked ? apr.pm : 0;
             }
 
@@ -247,6 +300,11 @@ function updateSpellDetails() {
         });
 
         custoTotalSpan.textContent = custoTotal;
+        
+        // Atualiza a descrição com os novos valores
+        const descriptionElement = detailsDiv.querySelector('.spell-description');
+        descriptionElement.textContent = updateSpellDescription(selectedSpell.descricao, selectedSpell.aprimoramentos);
+        
         saveSpells(); // Salva o estado atual dos aprimoramentos
     };
 
