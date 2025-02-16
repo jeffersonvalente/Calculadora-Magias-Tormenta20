@@ -215,7 +215,8 @@ function selectSpell(spell) {
 
 function parseSpellIncrement(incrementText) {
     // Extrai os valores numéricos do texto do aprimoramento
-    const diceMatch = incrementText.match(/\+(\d+)d(\d+)\+(\d+)/);
+    // Procura por padrões como "1d8+1" ou "2d6+2"
+    const diceMatch = incrementText.match(/(\d+)d(\d+)\+(\d+)/);
     if (diceMatch) {
         return {
             numDice: parseInt(diceMatch[1]),
@@ -228,13 +229,16 @@ function parseSpellIncrement(incrementText) {
 
 function parseSpellBase(spellText) {
     // Extrai os valores base da descrição da magia
+    // Procura por padrões como "1d8+1" ou "2d6+2"
     const diceMatch = spellText.match(/(\d+)d(\d+)\+(\d+)/);
     if (diceMatch) {
         return {
             numDice: parseInt(diceMatch[1]),
             diceSides: parseInt(diceMatch[2]),
             bonus: parseInt(diceMatch[3]),
-            fullMatch: diceMatch[0]
+            fullMatch: diceMatch[0],
+            index: diceMatch.index,
+            length: diceMatch[0].length
         };
     }
     return null;
@@ -245,17 +249,24 @@ function updateSpellDescription(baseText, aprimoramentos) {
     const baseValues = parseSpellBase(baseText);
     
     if (baseValues) {
+        let totalNumDice = baseValues.numDice;
+        let totalBonus = baseValues.bonus;
+        
         aprimoramentos.forEach(apr => {
             if (apr.count && apr.count > 0 && apr.descricao.toLowerCase().startsWith('aumenta')) {
                 const increment = parseSpellIncrement(apr.descricao);
                 if (increment) {
-                    const totalNumDice = baseValues.numDice + (increment.numDice * apr.count);
-                    const totalBonus = baseValues.bonus + (increment.bonus * apr.count);
-                    const newValue = `${totalNumDice}d${baseValues.diceSides}+${totalBonus}`;
-                    updatedText = updatedText.replace(baseValues.fullMatch, newValue);
+                    totalNumDice += increment.numDice * apr.count;
+                    totalBonus += increment.bonus * apr.count;
                 }
             }
         });
+
+        // Substitui apenas a parte dos dados, mantendo o resto do texto
+        const beforeText = updatedText.substring(0, baseValues.index);
+        const afterText = updatedText.substring(baseValues.index + baseValues.length);
+        const newDiceText = `${totalNumDice}d${baseValues.diceSides}+${totalBonus}`;
+        updatedText = beforeText + newDiceText + afterText;
     }
     
     return updatedText;
