@@ -248,6 +248,16 @@ button:hover {
     background-color: #cc0000;
 }
 
+.invalid {
+    border-color: #ff4444 !important;
+    background-color: #fff8f8 !important;
+}
+
+.invalid:focus {
+    outline-color: #ff4444 !important;
+    box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2) !important;
+}
+
 .spell-item {
     padding: 10px;
     border: 1px solid #ddd;

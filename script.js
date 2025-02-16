@@ -71,37 +71,81 @@ function addAprimoramentoField() {
     aumentaCheck.checked = false;
 }
 
+function validateSpellForm() {
+    const nome = document.getElementById('nome').value.trim();
+    const custo = document.getElementById('custo').value;
+    const execucao = document.getElementById('execucao').value.trim();
+    const alcance = document.getElementById('alcance').value.trim();
+    const alvoArea = document.getElementById('alvoArea').value.trim();
+    const duracao = document.getElementById('duracao').value.trim();
+    const resistencia = document.getElementById('resistencia').value.trim();
+    const descricao = document.getElementById('descricao').value.trim();
+
+    if (!nome || !custo || !execucao || !alcance || !alvoArea || !duracao || !descricao) {
+        alert('Por favor, preencha todos os campos obrigatórios da magia.');
+        return false;
+    }
+
+    if (isNaN(parseInt(custo)) || parseInt(custo) < 0) {
+        alert('O custo da magia deve ser um número válido maior ou igual a zero.');
+        return false;
+    }
+
+    return true;
+}
+
 function handleSpellSubmit(e) {
     e.preventDefault();
     
+    if (!validateSpellForm()) {
+        return;
+    }
+
     const spell = {
         id: editingSpell ? editingSpell.id : Date.now(),
-        nome: document.getElementById('nome').value,
+        nome: document.getElementById('nome').value.trim(),
         custo: parseInt(document.getElementById('custo').value),
-        execucao: document.getElementById('execucao').value,
-        alcance: document.getElementById('alcance').value,
-        alvoArea: document.getElementById('alvoArea').value,
-        duracao: document.getElementById('duracao').value,
-        resistencia: document.getElementById('resistencia').value,
-        descricao: document.getElementById('descricao').value,
+        execucao: document.getElementById('execucao').value.trim(),
+        alcance: document.getElementById('alcance').value.trim(),
+        alvoArea: document.getElementById('alvoArea').value.trim(),
+        duracao: document.getElementById('duracao').value.trim(),
+        resistencia: document.getElementById('resistencia').value.trim(),
+        descricao: document.getElementById('descricao').value.trim(),
         aprimoramentos: []
     };
 
     const aprimoramentoEntries = document.querySelectorAll('.aprimoramento-entry');
+    let hasInvalidAprimoramento = false;
+
     aprimoramentoEntries.forEach(entry => {
-        const pm = entry.querySelector('.pm-input').value;
-        const desc = entry.querySelector('.desc-input').value;
-        const aumenta = entry.querySelector('.aumenta-check').checked;
+        const pmInput = entry.querySelector('.pm-input');
+        const descInput = entry.querySelector('.desc-input');
+        const aumentaCheck = entry.querySelector('.aumenta-check');
         
-        if (pm && desc) {
-            spell.aprimoramentos.push({
-                pm: parseInt(pm),
-                descricao: desc,
-                aumenta: aumenta,
-                count: 0
-            });
+        const pm = pmInput.value.trim();
+        const desc = descInput.value.trim();
+        const aumenta = aumentaCheck.checked;
+        
+        if (pm || desc) { // Se algum dos campos estiver preenchido
+            if (!pm || !desc || isNaN(parseInt(pm)) || parseInt(pm) < 0) {
+                hasInvalidAprimoramento = true;
+                pmInput.classList.add('invalid');
+                descInput.classList.add('invalid');
+            } else {
+                spell.aprimoramentos.push({
+                    pm: parseInt(pm),
+                    descricao: desc,
+                    aumenta: aumenta,
+                    count: 0
+                });
+            }
         }
     });
+
+    if (hasInvalidAprimoramento) {
+        alert('Por favor, verifique os campos de aprimoramento. O PM deve ser um número válido e a descrição deve estar preenchida.');
+        return;
+    }
 
     if (editingSpell) {
         const index = spells.findIndex(s => s.id === editingSpell.id);
@@ -115,7 +159,6 @@ function handleSpellSubmit(e) {
     updateSpellsList();
     e.target.reset();
     document.getElementById('aprimoramentosContainer').innerHTML = '';
-    addAprimoramentoField();
 }
 
 function saveSpells() {
