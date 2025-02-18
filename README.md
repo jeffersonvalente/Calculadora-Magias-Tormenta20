@@ -9,6 +9,7 @@ Calculadora de dano para feitiços em jogos de RPG, levando em consideração fa
 - 🔢 Personalização de fórmulas para diferentes tipos de feitiços.
 - 🛡️ Inclusão de resistências e buffs/debuffs dinâmicos.
 - 📊 Interface simples para facilitar a entrada de dados.
+- 📝 Cadastro de novas magias através da interface web.
 
 ## 📌 Tecnologias Utilizadas
 
@@ -17,6 +18,7 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
 - **Flask** (se houver API ou interface web)
 - **Jupyter Notebook** (se houver estudos de cálculos documentados)
 - **Pytest** (se houver testes unitários)
+- **HTML/CSS/JavaScript** para a interface web
 
 ## 📦 Instalação
 
@@ -44,6 +46,20 @@ pip install -r requirements.txt
    ```
 2. Insira os parâmetros necessários para calcular o dano do feitiço.
 3. O resultado do cálculo será exibido no terminal ou interface gráfica (se aplicável).
+
+## 🌟 Interface Web
+
+O projeto possui uma interface web que permite:
+- Listar magias cadastradas.
+- Visualizar detalhes de cada magia.
+- Editar ou excluir magias existentes.
+- **Cadastrar novas magias**, inserindo informações como nome, custo base, execução, alcance, alvo, duração, resistência e aprimoramentos disponíveis.
+
+Para rodar a interface web, utilize o seguinte comando:
+```bash
+flask run
+```
+E acesse no navegador: `http://127.0.0.1:5000`
 
 ## ✅ Testes
 
