@@ -1,4 +1,4 @@
-# Spell Calc
+# Calculadora-Magias-Tormenta20
 
 ![Spell Calc](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow) ![License](https://img.shields.io/github/license/jeffersonvalente/spell-calc)
 
