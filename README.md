@@ -93,5 +93,10 @@ Se quiser testar ou contribuir, o código está aberto no GitHub! 🚀
 Este projeto é de código aberto e está licenciado sob a [MIT License](LICENSE).
 
 ---
+📫 Entre em contato comigo:
 
-🔹 **Desenvolvido por [Seu Nome]** 🔹
+- [LinkedIn](https://www.linkedin.com/in/jefferson-hoy-valente/)
+- [GitHub](https://github.com/jeffersonvalente)
+- 📧 jeffersonvalente1988@gmail.com
+
+🔹 **Desenvolvido por [Jefferson Valente]** 🔹
