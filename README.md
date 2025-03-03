@@ -97,6 +97,6 @@ Este projeto é de código aberto e está licenciado sob a [MIT License](LICENSE
 
 - [LinkedIn](https://www.linkedin.com/in/jefferson-hoy-valente/)
 - [GitHub](https://github.com/jeffersonvalente)
-- [site](jeffersonvalente.com.br)
+
 
 🔹 **Desenvolvido por [Jefferson Valente]** 🔹
