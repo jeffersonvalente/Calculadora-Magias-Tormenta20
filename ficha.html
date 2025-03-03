@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Ficha Editável - T20</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Ícones e Fontes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Cinzel:wght@400;700&family=Crimson+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Reaproveitando o CSS existente -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Barra de navegação rápida */
+    .nav-quick {
+      background: var(--surface-color);
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      margin-bottom: 16px;
+    }
+    .nav-quick a {
+      margin: 0 10px;
+      text-decoration: none;
+      font-family: 'Cinzel', serif;
+      color: var(--primary-color);
+    }
+    .pdf-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .pdf-viewer {
+      width: 100%;
+      height: 900px;
+      border: none;
+      background-color: transparent; /* Tenta remover fundo preto */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegação rápida -->
+  <nav class="nav-quick">
+    <a href="ficha.html">Ficha</a>
+    <a href="index.html">Lista de Magias</a>
+    <a href="anotacoes.html">Anotações</a>
+  </nav>
+
+  <!-- Exibição do PDF editável -->
+  <div class="pdf-container">
+    <embed src="Ficha Editável - T20.pdf" type="application/pdf" class="pdf-viewer">
+  </div>
+
+</body>
+</html>

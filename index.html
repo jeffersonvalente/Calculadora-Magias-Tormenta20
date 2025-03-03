@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Calculadora de Magias – Ferramenta para gerenciar e calcular magias">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Magias</title>
+
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- Fontes inspiradas em RPG/Fantasia -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Cinzel:wght@400;700&family=Crimson+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Barra de navegação rápida (ADICIONADA) -->
+  <nav style="background: var(--surface-color); padding: 10px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.1); margin-bottom: 16px;">
+    <a href="ficha.html" style="margin-right: 20px; text-decoration: none; font-family: 'Cinzel', serif; color: var(--primary-color);">
+      Ficha
+    </a>
+    <a href="index.html" style="text-decoration: none; font-family: 'Cinzel', serif; color: var(--primary-color);">
+      Lista de Magias
+    </a>
+    <a href="anotacoes.html" style="margin-left:20px; text-decoration: none; font-family: 'Cinzel', serif; color: var(--primary-color);">
+      Anotações
+    </a>
+  </nav>
+  <!-- FIM da Barra de navegação rápida -->
+
+  <div class="container">
+    <header class="top-bar" role="banner">
+      <div class="top-bar-title">
+        <i class="fas fa-scroll" aria-hidden="true"></i>
+        <h1>Calculadora de Magias</h1>
+      </div>
+      <button id="toggleFormBtn" class="toggle-form-btn" aria-label="Nova Magia">
+        <i class="fas fa-feather" aria-hidden="true"></i>
+        Nova Magia
+      </button>
+    </header>
+
+    <!-- BACKDROP -->
+    <div class="overlay-backdrop" id="overlayBackdrop"></div>
+
+    <!-- PAINEL LATERAL (Formulário) -->
+    <section class="spell-form" id="spellFormContainer">
+      <form id="spellForm" novalidate>
+        <div class="scroll-header">
+          <h2 id="formTitle">Nova / Editar Magia</h2>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required>
+          </div>
+          <div class="form-group">
+            <label for="custo">Custo:</label>
+            <input type="number" id="custo" required>
+          </div>
+          <div class="form-group">
+            <label for="execucao">Execução:</label>
+            <input type="text" id="execucao" required>
+          </div>
+          <div class="form-group">
+            <label for="alcance">Alcance:</label>
+            <input type="text" id="alcance" required>
+          </div>
+          <div class="form-group">
+            <label for="alvoArea">Alvo ou Área:</label>
+            <input type="text" id="alvoArea" required>
+          </div>
+          <div class="form-group">
+            <label for="duracao">Duração:</label>
+            <input type="text" id="duracao" required>
+          </div>
+          <div class="form-group">
+            <label for="resistencia">Resistência:</label>
+            <input type="text" id="resistencia" required>
+          </div>
+        </div>
+        
+        <div class="form-group full-width">
+          <label for="descricao">Descrição:</label>
+          <textarea id="descricao" required></textarea>
+        </div>
+
+        <!-- Subtítulo e container para aprimoramentos existentes (apenas em modo edição) -->
+        <div id="existingAprimoramentosSection" class="form-group full-width" style="display: none;">
+          <h3 class="aprimoramentos-subtitle">Aprimoramentos Existentes</h3>
+          <div id="existingAprimoramentosContainer"></div>
+        </div>
+
+        <!-- Área para adicionar novo aprimoramento -->
+        <div class="form-group full-width">
+          <label for="aprimoramentos">Novo Aprimoramento:</label>
+          <div id="aprimoramentosContainer"></div>
+          <div class="aprimoramento-inputs">
+            <input type="number" id="novoPM" placeholder="PM" class="pm-input">
+            <input type="text" id="novaDescricao" placeholder="Descrição" class="desc-input">
+            <input type="checkbox" id="novoAumenta" class="aumenta-check">
+            <label for="novoAumenta">Aumenta?</label>
+            <button type="button" id="addAprimoramento" class="add-button" aria-label="Adicionar Aprimoramento">
+              <i class="fas fa-plus" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="save-button">
+            <i class="fas fa-save" aria-hidden="true"></i>
+            Salvar Magia
+          </button>
+          <button type="button" class="cancel-button" id="cancelForm" aria-label="Cancelar">
+            <i class="fas fa-times" aria-hidden="true"></i>
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <main class="main-content" role="main">
+      <section class="spell-list">
+        <div class="section-header">
+          <i class="fas fa-scroll" aria-hidden="true"></i>
+          <h2>Lista de Magias</h2>
+        </div>        
+        <div class="spell-list-container" id="spellsList"></div>
+      </section>
+
+      <section class="spell-details">
+        <div class="section-header">
+          <i class="fas fa-book-open" aria-hidden="true"></i>
+          <h2>Detalhes da Magia</h2>
+        </div>
+        <div id="spellDetails" class="spell-details-content">
+          <div class="empty-state">
+            <i class="fas fa-magic" aria-hidden="true"></i>
+            <p>Selecione uma magia para ver seus detalhes</p>
+          </div>
+        </div>
+        <div id="custoTotal" class="mana-cost" style="display: none;">
+          <i class="fas fa-fire-alt" aria-hidden="true"></i>
+          <h3>Custo Total: <span id="custoTotalValue">0</span> PM</h3>
+          <button id="deductManaBtn" class="deduct-mana-btn" disabled aria-label="Deduzir Mana">
+            <i class="fas fa-minus-circle" aria-hidden="true"></i>
+            Deduzir Mana
+          </button>
+        </div>
+      </section>
+
+      <aside class="right-sidebar">
+        <div class="mana-pool-card">
+          <div class="section-header">
+            <i class="fas fa-fire" aria-hidden="true"></i>
+            <h2>Pontos de Mana</h2>
+          </div>
+          <div class="mana-pool-content">
+            <div class="circles-container">
+              <div class="circle-group">
+                <div class="circle-container">
+                  <input 
+                    type="number" 
+                    id="manaPool" 
+                    min="0" 
+                    value="0"
+                    aria-label="Total de PM" 
+                  >
+                  <div class="circle-border total-pm"></div>
+                </div>
+                <span class="label">Total de PM</span>
+              </div>
+              <div class="circle-group">
+                <div class="circle-container">
+                  <span id="manaAvailable" class="value">0</span>
+                  <div class="circle-border available"></div>
+                </div>
+                <span class="label">Disponível</span>
+              </div>
+            </div>
+            <div class="mana-details">
+              <span class="mana-spent">Gasto: <span id="manaSpent">0</span> PM</span>
+            </div>
+            <div class="mana-controls">
+              <div class="recover-input-group">
+                <input type="number" id="recoverAmount" min="1" value="1" class="recover-input">
+                <button id="recoverManaBtn" class="recover-mana-btn" title="Recuperar PM" aria-label="Recuperar PM">
+                  <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                  Recuperar PM
+                </button>
+              </div>
+              <div class="recover-message" id="recoverMessage"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="resistance-card">
+          <div class="section-header">
+            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+            <h2>CD de Resistência</h2>
+          </div>
+          <div class="resistance-content">
+            <div class="circles-container resistance-single">
+              <div class="circle-group">
+                <div class="circle-container">
+                  <input 
+                    type="number" 
+                    id="resistanceDC" 
+                    min="0" 
+                    value="10"
+                    aria-label="CD Base" 
+                  >
+                  <div class="circle-border base-cd"></div>
+                </div>
+                <span class="label">CD Base</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

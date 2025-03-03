@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Gerenciador de Anotações – Ferramenta para criar, editar e excluir anotações">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anotações</title>
+
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- Fontes inspiradas em RPG/Fantasia -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Cinzel:wght@400;700&family=Crimson+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Caso seja necessário ajustes específicos para anotações */
+    .annotation-form {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 460px;
+      max-width: 90%;
+      height: 100%;
+      background: var(--surface-color);
+      box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow-y: auto;
+      border-left: 1px solid rgba(0,0,0,0.1);
+      border-top-left-radius: var(--border-radius);
+      border-bottom-left-radius: var(--border-radius);
+    }
+    .annotation-form.open {
+      transform: translateX(0);
+    }
+    .annotation-item {
+      padding: 12px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      background: #FFFDF7;
+      margin-bottom: 8px;
+    }
+    .annotation-item.selected {
+      background-color: var(--primary-color);
+      border-color: var(--primary-dark);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Barra de navegação rápida -->
+  <nav style="background: var(--surface-color); padding: 10px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.1); margin-bottom: 16px;">
+    <a href="ficha.html" style="margin-right: 20px; text-decoration: none; font-family: 'Cinzel', serif; color: var(--primary-color);">
+      Ficha
+    </a>
+    <a href="index.html" style="margin-right: 20px; text-decoration: none; font-family: 'Cinzel', serif; color: var(--primary-color);">
+      Lista de Magias
+    </a>
+    <a href="anotacoes.html" style="text-decoration: none; font-family: 'Cinzel', serif; color: var(--primary-color);">
+      Anotações
+    </a>
+  </nav>
+
+  <div class="container">
+    <header class="top-bar" role="banner">
+      <div class="top-bar-title">
+        <i class="fas fa-sticky-note" aria-hidden="true"></i>
+        <h1>Anotações</h1>
+      </div>
+      <button id="toggleAnnotationFormBtn" class="toggle-form-btn" aria-label="Nova Anotação">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+        Nova Anotação
+      </button>
+    </header>
+
+    <!-- BACKDROP -->
+    <div class="overlay-backdrop" id="annotationOverlayBackdrop"></div>
+
+    <!-- Painel Lateral - Formulário de Anotação -->
+    <section class="annotation-form" id="annotationFormContainer">
+      <form id="annotationForm" novalidate>
+        <div class="scroll-header">
+          <h2 id="annotationFormTitle">Nova / Editar Anotação</h2>
+        </div>
+        <div class="form-group">
+          <label for="annotationTitulo">Título:</label>
+          <input type="text" id="annotationTitulo" required>
+        </div>
+        <div class="form-group">
+          <label for="annotationConteudo">Anotação:</label>
+          <textarea id="annotationConteudo" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="save-button">
+            <i class="fas fa-save" aria-hidden="true"></i>
+            Salvar Anotação
+          </button>
+          <button type="button" class="cancel-button" id="cancelAnnotationForm" aria-label="Cancelar">
+            <i class="fas fa-times" aria-hidden="true"></i>
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <main class="main-content" role="main">
+      <section class="spell-list">
+        <div class="section-header">
+          <i class="fas fa-list" aria-hidden="true"></i>
+          <h2>Lista de Anotações</h2>
+        </div>       
+        <div class="spell-list-container" id="annotationsList"></div>
+      </section>
+
+      <section class="spell-details">
+        <div class="section-header">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+          <h2>Detalhes da Anotação</h2>
+        </div>
+        <div id="annotationDetails" class="spell-details-content">
+          <div class="empty-state">
+            <i class="fas fa-sticky-note" aria-hidden="true"></i>
+            <p>Selecione uma anotação para ver seus detalhes</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="anotacoes.js"></script>
+</body>
+</html>
