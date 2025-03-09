@@ -195,6 +195,48 @@
                 </button>
               </div>
               <div class="recover-message" id="recoverMessage"></div>
+
+            </div>
+          </div>
+                </div>
+              
+        <!-- NOVO: Card de Pontos de Vida -->
+        <div class="vida-pool-card">
+          <div class="section-header">
+            <i class="fas fa-heart" aria-hidden="true"></i>
+            <h2>Pontos de Vida</h2>
+          </div>
+          <div class="vida-pool-content">
+            <div class="circles-container">
+              <div class="circle-group">
+                <div class="circle-container">
+                  <input 
+                    type="number" 
+                    id="vidaTotal" 
+                    min="0" 
+                    value="0" 
+                    aria-label="Total de PV">
+                  <div class="circle-border total-pv"></div>
+                </div>
+                <span class="label">Total de PV</span>
+              </div>
+              <div class="circle-group">
+                <div class="circle-container">
+                  <span id="vidaDisponivel" class="value">0</span>
+                  <div class="circle-border available-vida"></div>
+                </div>
+                <span class="label">Disponível</span>
+              </div>
+            </div>
+            <div class="vida-controls">
+              <div class="alter-input-group">
+                <input type="number" id="alterPVAmount" value="0" class="recover-input" aria-label="Valor de alteração de PV">
+                <button id="alterPVBtn" class="recover-mana-btn" title="Alterar PV" aria-label="Alterar PV">
+                  <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                  Alterar PV
+                </button>
+              </div>
+              <div class="alter-message" id="alterMessage"></div>
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadState();
   // Atualiza o mana disponível com base nos valores carregados
   updateManaInfo();
+  updateVidaInfo();
 
   const spellForm = document.getElementById('spellForm');
   const addAprimoramentoBtn = document.getElementById('addAprimoramento');
@@ -78,6 +79,86 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ========== NOVOS PARA PV ==========
+  // Função que atualiza os Pontos de Vida Disponíveis
+  function updateVidaInfo() {
+    const vidaTotal = parseInt(document.getElementById('vidaTotal').value) || 0;
+    // Tenta ler do localStorage; se não existir, inicia com o valor total
+    let vidaDisponivel = parseInt(localStorage.getItem('vidaDisponivel'));
+    if (isNaN(vidaDisponivel)) {
+      vidaDisponivel = vidaTotal;
+      localStorage.setItem('vidaDisponivel', vidaDisponivel);
+    }
+    
+    // Define limites: máximo = vidaTotal; mínimo = -floor(vidaTotal/2)
+    const maxPV = vidaTotal;
+    const minPV = Math.floor(-vidaTotal / 2);
+    
+    // Clampa o valor
+    if (vidaDisponivel > maxPV) vidaDisponivel = maxPV;
+    if (vidaDisponivel < minPV) vidaDisponivel = minPV;
+    localStorage.setItem('vidaDisponivel', vidaDisponivel);
+    
+    // Atualiza o elemento que exibe os PV disponíveis
+    const vidaDisponivelElem = document.getElementById('vidaDisponivel');
+    vidaDisponivelElem.textContent = vidaDisponivel;
+    
+    // Atualiza o círculo visual dos PV disponíveis
+    const availableCircle = document.querySelector('.circle-border.available-vida');
+    // Calcula a fração dentro do intervalo: (valor - min) / (max - min)
+    const fraction = (maxPV - minPV) > 0 ? (vidaDisponivel - minPV) / (maxPV - minPV) : 0;
+    const percentage = Math.round(fraction * 100);
+    availableCircle.style.setProperty('--percentage', `${percentage}%`);
+    
+    let availableGradient;
+    if (percentage <= 25) {
+      availableGradient = `linear-gradient(135deg, var(--danger-color) ${percentage}%, rgba(255,82,82,0.2))`;
+    } else if (percentage <= 50) {
+      availableGradient = `linear-gradient(135deg, var(--secondary-color) ${percentage}%, rgba(255,152,0,0.2))`;
+    } else {
+      availableGradient = `linear-gradient(135deg, var(--success-color) ${percentage}%, rgba(179,136,255,0.2))`;
+    }
+    availableCircle.style.setProperty('--border-gradient', availableGradient);
+    const borderWidth = Math.max(2, 5 * (percentage / 100));
+    availableCircle.style.borderWidth = `${borderWidth}px`;
+  }
+
+  // Listener para o input de Vida Total
+  document.getElementById('vidaTotal').addEventListener('input', () => {
+    localStorage.setItem('vidaTotal', document.getElementById('vidaTotal').value);
+    updateVidaInfo();
+  });
+
+  // Listener para o botão "Alterar PV"
+  document.getElementById('alterPVBtn').addEventListener('click', () => {
+    const alterInput = document.getElementById('alterPVAmount');
+    const delta = parseInt(alterInput.value) || 0;
+    const vidaTotal = parseInt(document.getElementById('vidaTotal').value) || 0;
+    const maxPV = vidaTotal;
+    const minPV = Math.floor(-vidaTotal / 2);
+    
+    let vidaDisponivel = parseInt(localStorage.getItem('vidaDisponivel'));
+    if (isNaN(vidaDisponivel)) {
+      vidaDisponivel = vidaTotal;
+    }
+    
+    vidaDisponivel += delta;
+    if (vidaDisponivel > maxPV) vidaDisponivel = maxPV;
+    if (vidaDisponivel < minPV) vidaDisponivel = minPV;
+    localStorage.setItem('vidaDisponivel', vidaDisponivel);
+    
+    saveState();
+    updateVidaInfo();
+    
+    const alterMessage = document.getElementById('alterMessage');
+    alterMessage.textContent = `PV atualizados!`;
+    alterMessage.classList.add('show');
+    setTimeout(() => {
+      alterMessage.classList.remove('show');
+    }, 2000);
+  });
+  // ========== FIM DOS NOVOS PARA PV ==========
+
   // Fecha se clicar no backdrop
   overlayBackdrop.addEventListener('click', () => {
     formContainer.classList.remove('open');
@@ -90,6 +171,11 @@ function saveState() {
   localStorage.setItem('manaPool', document.getElementById('manaPool').value);
   localStorage.setItem('manaSpent', document.getElementById('manaSpent').textContent);
   localStorage.setItem('resistanceDC', document.getElementById('resistanceDC').value);
+  // A nova lógica utiliza "vidaDisponivel"
+  if (!localStorage.getItem('vidaDisponivel')) {
+    // Se não existir, inicia com o valor do input "vidaTotal" (ou "0")
+  localStorage.setItem('vidaDisponivel', document.getElementById('vidaTotal').value);
+  }
 }
 
 function loadState() {
@@ -105,6 +191,25 @@ function loadState() {
   if (resistanceDCVal !== null) {
     document.getElementById('resistanceDC').value = resistanceDCVal;
   }
+  // Carrega o valor total de PV
+  let vidaTotalVal = localStorage.getItem('vidaTotal');
+  // Se não existir um valor salvo para vidaTotal, defina um padrão (exemplo: 10)
+  if (vidaTotalVal === null || vidaTotalVal === "") {
+    vidaTotalVal = "0"; // ou o valor padrão que preferir
+    localStorage.setItem('vidaTotal', vidaTotalVal);
+  }
+  document.getElementById('vidaTotal').value = vidaTotalVal;
+
+  let vidaDisponivel = localStorage.getItem('vidaDisponivel');
+  // Se não existir um valor salvo para vidaDisponivel, defina um padrão (exemplo: 10)
+  if (vidaDisponivel === null || vidaDisponivel === "") {
+    vidaDisponivel = "0"; // ou o valor padrão que preferir
+    localStorage.setItem('vidaDisponivel', vidaDisponivel);
+  }
+  document.getElementById('vidaDisponivel').value = vidaDisponivel;
+  
+  // Após carregar todos os valores, atualize os PV
+  //updateVidaInfo();
 }
 
 function updateManaInfo() {
@@ -167,7 +272,6 @@ function updateDeductButton() {
     return;
   }
 
-  // Se houver Truque
   const hasTruque = selectedSpell.aprimoramentos.some(apr => 
     apr.count > 0 && apr.descricao.toLowerCase().startsWith('truque')
   );
@@ -310,12 +414,10 @@ function handleSpellSubmit(e) {
   }
 
   if (editingSpell) {
-    // Atualiza magia existente
     const index = spells.findIndex(s => s.id === editingSpell.id);
     spells[index] = spell;
     editingSpell = null;
   } else {
-    // Nova magia
     spells.push(spell);
   }
 
@@ -528,7 +630,6 @@ function updateSpellDetails() {
       custoAtualSpan.textContent = custoApr > 0 ? `(+${custoApr} PM)` : '(+0 PM)';
     });
 
-    // Se houver Truque selecionado
     const hasTruque = selectedSpell.aprimoramentos.some(apr => 
       apr.count > 0 && apr.descricao.toLowerCase().startsWith('truque')
     );
@@ -540,7 +641,6 @@ function updateSpellDetails() {
     saveSpells();
   };
 
-  // Botões + e -
   detailsDiv.querySelectorAll('.aumenta-controls').forEach(controls => {
     const countSpan = controls.querySelector('.count-value');
     const btnMinus = controls.querySelector('.btn-minus');
@@ -559,7 +659,6 @@ function updateSpellDetails() {
     });
   });
 
-  // Checkboxes
   detailsDiv.querySelectorAll('.apr-check').forEach(checkbox => {
     checkbox.addEventListener('change', updateCustoTotal);
   });
@@ -585,7 +684,6 @@ function editSpell(spell) {
   formContainer.classList.add('open');
   overlayBackdrop.classList.add('open');
 
-  // Preenche campos
   document.getElementById('nome').value = spell.nome;
   document.getElementById('custo').value = spell.custo;
   document.getElementById('execucao').value = spell.execucao;
@@ -595,10 +693,7 @@ function editSpell(spell) {
   document.getElementById('resistencia').value = spell.resistencia;
   document.getElementById('descricao').value = spell.descricao;
 
-  // Limpa "novo" antes de mostrar
   aprContainerNovo.innerHTML = '';
-
-  // Exibe Aprimoramentos Existentes
   existingContainer.innerHTML = '';
   existingSection.style.display = 'none';
 
