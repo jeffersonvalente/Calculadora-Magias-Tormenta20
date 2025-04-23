@@ -26,6 +26,7 @@ Tecnologias Utilizadas
 
 Estrutura do Projeto
 
+```plaintext
 projeto/
 ├── index.html        # Página principal com a calculadora de magias
 ├── ficha.html        # Visualização de ficha em PDF
@@ -35,8 +36,9 @@ projeto/
 ├── anotacoes.js      # Lógica das anotações
 ├── db.js             # Configuração do SQLite
 ├── server.js         # Servidor Express
-└── data/magias.db    # Banco com magias e anotações
-
+└── data/
+    └── magias.db     # Banco com magias e anotações
+```
 ---
 
 Como Funciona
