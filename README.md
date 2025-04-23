@@ -1,3 +1,4 @@
+
 Gerenciador de Magias e Anotações para Tormenta 20
 
 Esse projeto foi criado pra facilitar a vida de quem joga Tormenta 20 — seja como mestre ou jogador.  
@@ -73,6 +74,12 @@ Por que usar?
 
 Durante a campanha, tempo é precioso. Esse projeto ajuda a deixar a mesa mais leve, organizada e sem planilha aberta do lado.  
 A ideia é automatizar o que trava e deixar a história fluir.
+
+---
+
+Licença
+
+MIT — veja o arquivo LICENSE
 
 ---
 
